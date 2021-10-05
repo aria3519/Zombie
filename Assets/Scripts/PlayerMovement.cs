@@ -30,13 +30,12 @@ public class PlayerMovement : MonoBehaviour {
     // 입력값에 따라 캐릭터를 앞뒤로 움직임
     private void Move() 
     {
-       /* Vector3 moveDistance =
+        Vector3 moveDistance = 
+            playerInput.move * transform.forward * moveSpeed * Time.deltaTime;
 
-            playerInput.move * transfrom.forward * moveSpeed * Time.deltaTime;
-        
         // 리지드바디를 이용해 gameobject 위치 변경 
         playerRigidbody.MovePosition(playerRigidbody.position + moveDistance);
-*/
+
     }
 
     // 입력값에 따라 캐릭터를 좌우로 회전
