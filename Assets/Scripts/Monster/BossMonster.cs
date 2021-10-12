@@ -17,7 +17,7 @@ public class BossMonster : LivingEntity
     [SerializeField] public LayerMask whatIsTarget; // 추적 대상 레이어
 
     private LivingEntity targetEntity; // 추적할 대상
-    private NavMeshAgent pathFinder; // 경로계산 AI 에이전트
+    //private NavMeshAgent pathFinder; // 경로계산 AI 에이전트
 
     [SerializeField] public ParticleSystem hitEffect; // 피격시 재생할 파티클 효과
     [SerializeField] public AudioClip deathSound; // 사망시 재생할 소리
@@ -27,13 +27,14 @@ public class BossMonster : LivingEntity
     private AudioSource BossAudioPlayer; // 오디오 소스 컴포넌트
     private Renderer BossRenderer; // 렌더러 컴포넌트
 
+    [SerializeField] public float FineRange = 1;
     [SerializeField] public float damage = 20f; // 공격력
-    [SerializeField] public float timeBetAttack = 0.5f; // 공격 간격
+    [SerializeField] public float timeBetAttack = 3f; // 공격 간격
     private float lastAttackTime; // 마지막 공격 시점
 
     private void Awake()
     {
-        pathFinder = GetComponent<NavMeshAgent>();
+        //pathFinder = GetComponent<NavMeshAgent>();
         BossAnimator = GetComponent<Animator>();
         BossAudioPlayer = GetComponent<AudioSource>();
 
@@ -78,36 +79,58 @@ public class BossMonster : LivingEntity
 
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        // 범위 그려주는 코드 
+        Gizmos.DrawWireSphere(transform.position, FineRange);
+    }
 
     private IEnumerator UpdatePath()
     {
         
-        LivingEntity attackTarget
-              = targetEntity.GetComponent<LivingEntity>();
+        
         // 살아있는 동안 무한 루프
         while (!dead)
         {
-            
-           
             if (hasTarget)
             {
-                pathFinder.isStopped = false;
+                //pathFinder.isStopped = false;
                 // 대상이 존내에 있는경우 Attack 상태로 변경 
-                lastAttackTime = Time.time;
+                LivingEntity attackTarget
+             = targetEntity.GetComponent<LivingEntity>();
+                
                 Vector3 hitPoint
                      = targetEntity.transform.position;
                 Vector3 hitNormal
-                    = transform.position - targetEntity.transform.position;
+                    = (transform.position - targetEntity.transform.position).normalized;
 
-                // 공격 실행
-                attackTarget.OnDamage(damage, hitPoint, hitNormal);
-
+                if (!dead && Time.time >= lastAttackTime + timeBetAttack)
+                {
+                    lastAttackTime = Time.time;
+                    // 공격 실행
+                    Debug.Log("Attack");
+                    attackTarget.OnDamage(damage, hitPoint, hitNormal);
+                }
 
             }
             else
             {
                 // 대상이 존내에 없으면 stay 상태 
-                pathFinder.isStopped = true;
+                //pathFinder.isStopped = true;
+
+                Collider[] colliders = Physics.OverlapSphere(transform.position, FineRange, whatIsTarget);
+                for (int i = 0; i < colliders.Length; i++)
+                {
+                    // 콜라이더로 부터 LivingEntity Component 가져오기
+                    LivingEntity livingEntity = colliders[i].GetComponent<LivingEntity>();
+                    //LivingEntity Component가 존재하며, 해당 LivingEntity 가 살아 있다면
+                    if (livingEntity != null && !livingEntity.dead)
+                    {
+                        // 추적대상으로 다른 살아있는 존재로 변경 
+                        targetEntity = livingEntity;
+                        break;
+                    }
+                }
             }
             
             // 0.25초 주기로 처리 반복

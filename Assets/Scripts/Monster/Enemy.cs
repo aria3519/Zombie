@@ -76,6 +76,7 @@ public class Enemy : LivingEntity {
         // 살아있는 동안 무한 루프
         while (!dead)
         {
+
             if(hasTarget)
             {
                 // 추적 대상 존내 : 경로를 갱신 하고 AI 이동을 계속 진행

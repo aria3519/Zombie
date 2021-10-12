@@ -69,11 +69,11 @@
     <Compile Include="Assets\Scripts\Rotator.cs" />
     <Compile Include="Assets\Scripts\PlayerInput.cs" />
     <Compile Include="Assets\Scripts\PlayerShooter.cs" />
+    <Compile Include="Assets\Scripts\Monster\BossMonster.cs" />
     <Compile Include="Assets\Scripts\PlayerHealth.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\Scripts\AmmoPack.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Monster\BossMonster.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
