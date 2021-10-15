@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI; // AI, 내비게이션 시스템 관련 코드를 가져오기
+//using UnityEngine.AI; // AI, 내비게이션 시스템 관련 코드를 가져오기
 
 public class BossMonster : LivingEntity
 {
@@ -54,10 +54,11 @@ public class BossMonster : LivingEntity
 
     private bool hasTarget
     {
+        
         get
         {
-            // 추적할 대상이 존재하고, 대상이 사망하지 않았다면 true
-            if (targetEntity != null && !targetEntity.dead)
+            // 추적할 대상이 존재하고, 대상이 사망하지 않았다면 true 
+            if (targetEntity != null && !targetEntity.dead )//&& FineRange >= targetEntity.transform.position
             {
                 return true;
             }
@@ -95,21 +96,21 @@ public class BossMonster : LivingEntity
             if (hasTarget)
             {
                 //pathFinder.isStopped = false;
-                // 대상이 존내에 있는경우 Attack 상태로 변경 
-                LivingEntity attackTarget
-             = targetEntity.GetComponent<LivingEntity>();
                 
-                Vector3 hitPoint
-                     = targetEntity.transform.position;
-                Vector3 hitNormal
-                    = (transform.position - targetEntity.transform.position).normalized;
+                Vector3 hitPoint = targetEntity.transform.position;
+                Vector3 hitNormal = (transform.position - targetEntity.transform.position).normalized; // 몬스터와 플레이어 위치를 뺀값의 단위 백터 -> 몬스터가 플레이어 보는 방향  
 
                 if (!dead && Time.time >= lastAttackTime + timeBetAttack)
                 {
                     lastAttackTime = Time.time;
                     // 공격 실행
                     Debug.Log("Attack");
-                    attackTarget.OnDamage(damage, hitPoint, hitNormal);
+
+                    if (FineRange >= Vector3.Distance(hitPoint, transform.position))
+                    {
+                        LivingEntity attackTarget = targetEntity.GetComponent<LivingEntity>();
+                        attackTarget.OnDamage(damage, hitPoint, hitNormal);
+                    }
                 }
 
             }
@@ -117,7 +118,6 @@ public class BossMonster : LivingEntity
             {
                 // 대상이 존내에 없으면 stay 상태 
                 //pathFinder.isStopped = true;
-
                 Collider[] colliders = Physics.OverlapSphere(transform.position, FineRange, whatIsTarget);
                 for (int i = 0; i < colliders.Length; i++)
                 {
@@ -131,8 +131,10 @@ public class BossMonster : LivingEntity
                         break;
                     }
                 }
+
+
             }
-            
+
             // 0.25초 주기로 처리 반복
             yield return new WaitForSeconds(0.25f);
         }

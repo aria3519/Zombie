@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\Scripts\AmmoPack.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Monster\RangeSkill.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
