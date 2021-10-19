@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 //using UnityEngine.AI; // AI, 내비게이션 시스템 관련 코드를 가져오기
 
 public class BossMonster : LivingEntity
@@ -19,18 +20,21 @@ public class BossMonster : LivingEntity
     private LivingEntity targetEntity; // 추적할 대상
     //private NavMeshAgent pathFinder; // 경로계산 AI 에이전트
 
-    [SerializeField] public ParticleSystem hitEffect; // 피격시 재생할 파티클 효과
-    [SerializeField] public AudioClip deathSound; // 사망시 재생할 소리
-    [SerializeField] public AudioClip hitSound; // 피격시 재생할 소리
+    [SerializeField] private ParticleSystem hitEffect; // 피격시 재생할 파티클 효과
+    [SerializeField] private AudioClip deathSound; // 사망시 재생할 소리
+    [SerializeField] private AudioClip hitSound; // 피격시 재생할 소리
 
     private Animator BossAnimator; // 애니메이터 컴포넌트
     private AudioSource BossAudioPlayer; // 오디오 소스 컴포넌트
     private Renderer BossRenderer; // 렌더러 컴포넌트
 
-    [SerializeField] public float FineRange = 1;
-    [SerializeField] public float damage = 20f; // 공격력
-    [SerializeField] public float timeBetAttack = 3f; // 공격 간격
+    [SerializeField] private float FineRange = 1;
+    [SerializeField] private float damage = 20f; // 공격력
+    [SerializeField] private float timeBetAttack = 3f; // 공격 간격
     private float lastAttackTime; // 마지막 공격 시점
+
+    [SerializeField] public GameObject BossSkill1; // 보스 스킬 1
+    private List<GameObject> listSkill1;
 
     private void Awake()
     {
@@ -39,6 +43,9 @@ public class BossMonster : LivingEntity
         BossAudioPlayer = GetComponent<AudioSource>();
 
         BossRenderer = GetComponentInChildren<Renderer>();
+
+        listSkill1 = new List<GameObject>();
+        
     }
     // Start is called before the first frame update
     void Start()
@@ -98,18 +105,19 @@ public class BossMonster : LivingEntity
                 //pathFinder.isStopped = false;
                 
                 Vector3 hitPoint = targetEntity.transform.position;
-                Vector3 hitNormal = (transform.position - targetEntity.transform.position).normalized; // 몬스터와 플레이어 위치를 뺀값의 단위 백터 -> 몬스터가 플레이어 보는 방향  
+                Vector3 hitNormal = (transform.position - hitPoint).normalized; // 몬스터와 플레이어 위치를 뺀값의 단위 백터 -> 몬스터가 플레이어 보는 방향  
 
                 if (!dead && Time.time >= lastAttackTime + timeBetAttack)
                 {
                     lastAttackTime = Time.time;
                     // 공격 실행
-                    Debug.Log("Attack");
+                  
 
-                    if (FineRange >= Vector3.Distance(hitPoint, transform.position))
+                    if (FineRange >= Vector3.Distance(hitPoint, transform.position)) // 지정된 범위 내에 플레이어만 공격 하게 
                     {
-                        LivingEntity attackTarget = targetEntity.GetComponent<LivingEntity>();
-                        attackTarget.OnDamage(damage, hitPoint, hitNormal);
+
+                        // 범위에 플레이어가 들어오면 스킬을 사용함 비활성화된 장판 찾기
+                        SkillAttack(hitPoint);
                     }
                 }
 
@@ -190,5 +198,24 @@ public class BossMonster : LivingEntity
         // 사망 효과음
         BossAudioPlayer.PlayOneShot(deathSound);
 
+    }
+
+    private void SkillAttack(Vector3 hitPoint)
+    {
+
+        //var Skill = GameObject.FindGameObjectsWithTag("Skill");
+        // 비활성화가 된 스킬이 있는 경우 사용 없으면 생성 
+       if (0 < listSkill1.Count)
+        {
+            listSkill1[0].transform.position = hitPoint;
+            listSkill1[0].SetActive(true);
+        }
+        else
+        {
+            var skill = Instantiate(BossSkill1);
+            listSkill1.Add(skill);
+            skill.transform.position = hitPoint;
+            skill.SetActive(true);
+        }
     }
 }
