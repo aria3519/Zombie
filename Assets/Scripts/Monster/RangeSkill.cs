@@ -22,14 +22,14 @@ public class RangeSkill : MonoBehaviour
         // 스위치문 단타 or 연타 (몇초 단위로 대미지를 줄지)
 
         //gameObject.SetActive(true)
-        Debug.Log("RangeAttack");
+       // Debug.Log("RangeAttack");
         LivingEntity attackTarget = other.GetComponent<LivingEntity>();
         Vector3 hitPoint = attackTarget.transform.position;
         Vector3 hitNormal = (transform.position - hitPoint).normalized; // 몬스터와 플레이어 위치를 뺀값의 단위 백터 -> 몬스터가 플레이어 보는 방향
         attackTarget.OnDamage(damage, hitPoint, hitNormal);
-        GameObject me = transform.gameObject;
+       /* GameObject me = transform.gameObject;
         me.SetActive(false);
-
+*/
         /*  switch (type)
           {
               case SkillKind.Once: // 대미지 한번 줌 
