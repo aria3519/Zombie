@@ -15,7 +15,7 @@ public class RangeSkill : MonoBehaviour
     private SkillKind type;
     [SerializeField] public float damage = 20f; // 공격력
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         // 플레이어가 맞았으면 플레이어의 체력을 감소 시킴    
         //other.GetComponent<LivingEntity>().OnDamage();
@@ -28,8 +28,8 @@ public class RangeSkill : MonoBehaviour
         Vector3 hitNormal = (transform.position - hitPoint).normalized; // 몬스터와 플레이어 위치를 뺀값의 단위 백터 -> 몬스터가 플레이어 보는 방향
         attackTarget.OnDamage(damage, hitPoint, hitNormal);
        /* GameObject me = transform.gameObject;
-        me.SetActive(false);
-*/
+        me.SetActive(false);*/
+
         /*  switch (type)
           {
               case SkillKind.Once: // 대미지 한번 줌 
@@ -43,9 +43,7 @@ public class RangeSkill : MonoBehaviour
                   break;
 
           }*/
-        // 대미지 주는 코드 
-
-        //
+       
 
 
 
@@ -57,6 +55,6 @@ public class RangeSkill : MonoBehaviour
         parent.SetActive(false);
     }
 
-    
+
 
 }
