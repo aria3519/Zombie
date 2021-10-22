@@ -5,11 +5,11 @@ using UnityEngine;
 public class Boss1 : BossBase
 {
 
-    
-    // Start is called before the first frame update
-    
 
-    public override void Stay()
+    // Start is called before the first frame update
+
+
+    protected override void Stay()
     {
        
         if (Time.time >= lastStayTime + StayTime )
@@ -39,7 +39,8 @@ public class Boss1 : BossBase
         }
 
     }
-  
+   
+
 
     /*private void OnDrawGizmosSelected()
     {

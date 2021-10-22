@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // UI 관련 코드
 public enum BossStates
 {
 
@@ -15,33 +16,36 @@ public enum BossStates
 abstract public class BossBase : LivingEntity
 {
     protected BossStates bossStates;
-    public LivingEntity PlayerEntity; // 플레이어 위치 
-    public float FineRange = 1;
-    public float AttackRange = 1;
+    [SerializeField] protected LivingEntity PlayerEntity; // 플레이어 위치 
+    [SerializeField] protected float FineRange = 1;
+    [SerializeField] protected float AttackRange = 1;
 
-    [SerializeField] public ParticleSystem hitEffect; // 피격시 재생할 파티클 효과
-    [SerializeField] public AudioClip deathSound; // 사망시 재생할 소리
-    [SerializeField] public AudioClip hitSound; // 피격시 재생할 소리
+    [SerializeField] protected ParticleSystem hitEffect; // 피격시 재생할 파티클 효과
+    [SerializeField] protected AudioClip deathSound; // 사망시 재생할 소리
+    [SerializeField] protected AudioClip hitSound; // 피격시 재생할 소리
 
-    public Animator BossAnimator; // 애니메이터 컴포넌트
-    public AudioSource BossAudioPlayer; // 오디오 소스 컴포넌트
-    public Renderer BossRenderer; // 렌더러 컴포넌트
+    [SerializeField] protected Animator BossAnimator; // 애니메이터 컴포넌트
+    [SerializeField] protected AudioSource BossAudioPlayer; // 오디오 소스 컴포넌트
+    [SerializeField] protected Renderer BossRenderer; // 렌더러 컴포넌트
 
-    public float lastStayTime; // 마지막으로 멈춘시간 
-    public float StayTime = 3f; // stay 3초 마다 
-    public float RangelastAttackTime; // 마지막으로 범위 공격 한 시간 
-    public float AttacklastAttackTime; // 마지막으로 근접공격 한 시간 
-    public float RangeAttackTime = 3f; // 3초마다 범위 공격 간격 
-    public float AttackTime = 5f; // 5초마다 근접 공격 간격 
+    protected float lastStayTime; // 마지막으로 멈춘시간 
+    protected float StayTime = 3f; // stay 3초 마다 
+    protected float RangelastAttackTime; // 마지막으로 범위 공격 한 시간 
+    protected float AttacklastAttackTime; // 마지막으로 근접공격 한 시간 
+    protected float RangeAttackTime = 3f; // 3초마다 범위 공격 간격 
+    protected float AttackTime = 5f; // 5초마다 근접 공격 간격 
 
-    [SerializeField] public GameObject BossSkill1; // 보스 스킬 1
-    [SerializeField] public GameObject BossSkill2; // 보스 스킬 2
-    public List<GameObject> listSkill1 = new List<GameObject>();
-    public List<GameObject> listSkill2 = new List<GameObject>();
-    public Vector3 PlayerPoint;
-    // Start is called before the first frame update
-    public abstract void Stay();
-    public virtual void Attack()
+    [SerializeField] protected GameObject BossSkill1; // 보스 스킬 1
+    [SerializeField] protected GameObject BossSkill2; // 보스 스킬 2
+    protected List<GameObject> listSkill1 = new List<GameObject>();
+    protected List<GameObject> listSkill2 = new List<GameObject>();
+    protected Vector3 PlayerPoint;
+
+    [SerializeField] protected Slider Bosshealth; // 체력을 표시할 UI 슬라이더
+
+
+    protected abstract void Stay();
+    protected virtual void Attack()
     {
         Debug.Log("Attack");
         if (0 < listSkill2.Count)
@@ -59,7 +63,7 @@ abstract public class BossBase : LivingEntity
         bossStates = BossStates.Stay;
         AttacklastAttackTime = Time.time;
     }
-    public virtual void RangeAttack()
+    protected virtual void RangeAttack()
     {
         Debug.Log("RangeAttack");
 
@@ -79,26 +83,25 @@ abstract public class BossBase : LivingEntity
         bossStates = BossStates.Stay;
         RangelastAttackTime = Time.time;
     }
-    public virtual void SpecialAttack()
+    protected virtual void SpecialAttack()
     {
         Debug.Log("SpecialAttack");
         bossStates = BossStates.Stay;
     }
 
 
-    void Start()
+    protected void Start()
     {
         BossAnimator = GetComponent<Animator>();
         BossAudioPlayer = GetComponent<AudioSource>();
         BossRenderer = GetComponentInChildren<Renderer>();
 
         bossStates = BossStates.Stay;
-
     }
 
-    private void Update()
+    protected void Update()
     {
-      switch(bossStates)
+      switch (bossStates)
         {
             case BossStates.Stay:
                 Stay();
@@ -119,7 +122,7 @@ abstract public class BossBase : LivingEntity
     }
 
 
-    public bool hasTarget
+    protected bool hasTarget
     {
 
         get
@@ -157,6 +160,14 @@ abstract public class BossBase : LivingEntity
         }
         // LivingEntity의 OnDamage()를 실행하여 데미지 적용
         base.OnDamage(damage, hitPoint, hitNormal);
+        BossHPbar();
+
+    }
+
+    protected void BossHPbar()
+    {
+        // 체력 슬라이더의 값을 현재 체력값으로 변경
+        Bosshealth.value = health;
     }
 
 }

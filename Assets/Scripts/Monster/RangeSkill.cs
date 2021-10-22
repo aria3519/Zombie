@@ -13,7 +13,7 @@ public class RangeSkill : MonoBehaviour
     // 이넘 단타 , 연타
 
     private SkillKind type;
-    [SerializeField] public float damage = 20f; // 공격력
+    [SerializeField] private float damage = 20f; // 공격력
 
     private void OnTriggerEnter(Collider other)
     {
